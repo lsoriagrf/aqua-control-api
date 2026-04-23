@@ -9,9 +9,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import com.bethlisdev.aqua_control_api.dto.WaterMetricDto;
 import com.bethlisdev.aqua_control_api.entity.WaterMetricEntity;
 import com.bethlisdev.aqua_control_api.repository.WaterMetricRepository;
-import com.bethlisdev.aqua_control_api.service.WaterMetricService;
+import com.bethlisdev.aqua_control_api.service.impl.WaterMetricServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class WaterMetricServiceTest {
@@ -20,7 +21,7 @@ public class WaterMetricServiceTest {
 	private WaterMetricRepository waterMetricRepository;
 	
 	@InjectMocks
-	private WaterMetricService waterMetricService;
+	private WaterMetricServiceImpl waterMetricServiceImpl;
 	
 	@Test
 	void shouldReturnMetricWhenIdExists() {
@@ -33,7 +34,7 @@ public class WaterMetricServiceTest {
 	    when(waterMetricRepository.findById(id)).thenReturn(Optional.of(entity));
 
 	    // Act
-	    Optional<WaterMetricEntity> result = waterMetricService.getWaterMetricById(id);
+	    Optional<WaterMetricDto> result = waterMetricServiceImpl.getWaterMetricById(id);
 
 	    // Assert
 	    assertNotNull(result);

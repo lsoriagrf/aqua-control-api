@@ -1,15 +1,9 @@
 package com.bethlisdev.aqua_control_api.service;
 
-import org.springframework.stereotype.Service;
-import com.bethlisdev.aqua_control_api.service.impl.ValveServiceImpl;
+import com.bethlisdev.aqua_control_api.dto.ValveDto;
 
-@Service
-public class ValveService implements ValveServiceImpl{
+public interface ValveService {
+	
+	public String setValve(ValveDto valveDto);
 
-	@Override
-	public String setValve() {
-		return "Valve configured correctly";
-	}
-	
-	
 }
