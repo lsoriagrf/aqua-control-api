@@ -8,8 +8,7 @@ public class ValveService implements ValveServiceImpl{
 
 	@Override
 	public String setValve() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Valve configured correctly";
 	}
 	
 	

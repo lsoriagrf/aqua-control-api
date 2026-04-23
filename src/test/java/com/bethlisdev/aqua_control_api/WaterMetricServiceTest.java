@@ -5,19 +5,22 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import com.bethlisdev.aqua_control_api.entity.WaterMetricEntity;
 import com.bethlisdev.aqua_control_api.repository.WaterMetricRepository;
-import com.bethlisdev.aqua_control_api.service.impl.WaterMetricServiceImpl;
+import com.bethlisdev.aqua_control_api.service.WaterMetricService;
 
+@ExtendWith(MockitoExtension.class)
 public class WaterMetricServiceTest {
 	
 	@Mock
 	private WaterMetricRepository waterMetricRepository;
 	
 	@InjectMocks
-	private WaterMetricServiceImpl waterMetricService;
+	private WaterMetricService waterMetricService;
 	
 	@Test
 	void shouldReturnMetricWhenIdExists() {
@@ -34,7 +37,7 @@ public class WaterMetricServiceTest {
 
 	    // Assert
 	    assertNotNull(result);
-	    assertEquals("85", result.get().getLevelPercentage());
+	    assertEquals("85%", result.get().getLevelPercentage());
 	}
 
 }
