@@ -8,26 +8,35 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import com.bethlisdev.aqua_control_api.Messages;
 import com.bethlisdev.aqua_control_api.dto.AuthenticatedUserDto;
+import com.bethlisdev.aqua_control_api.entity.UserEntity;
 import com.bethlisdev.aqua_control_api.exception.GoogleAuthenticationException;
 import com.bethlisdev.aqua_control_api.service.AuthService;
+import com.bethlisdev.aqua_control_api.service.UserService;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
     private final JwtDecoder googleJwtDecoder;
     private final String googleClientId;
+    private final UserService userService;
 
     public AuthServiceImpl(JwtDecoder jwtDecoder,
-            @Value("${security.oauth2.google.client-id}") String googleClientId) {
+            @Value("${security.oauth2.google.client-id}") String googleClientId,
+            UserService userService) {
         this.googleJwtDecoder = jwtDecoder;
         this.googleClientId = googleClientId;
+        this.userService = userService;
     }
 
     @Override
     public AuthenticatedUserDto authenticateUser(String idToken) {
         Jwt jwtToken = decodeToken(idToken);
         validateAudience(jwtToken);
-        return buildAuthenticatedUser(jwtToken);
+        UserEntity user = userService.syncUserFromGoogleLogin(
+                jwtToken.getClaimAsString("sub"),
+                jwtToken.getClaimAsString("email"),
+                jwtToken.getClaimAsString("name"));
+        return buildAuthenticatedUser(jwtToken, user);
     }
 
     private Jwt decodeToken(String idToken) {
@@ -59,18 +68,20 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    private AuthenticatedUserDto buildAuthenticatedUser(Jwt jwtToken) {
-        String userId = jwtToken.getClaimAsString("sub");
-        String email = jwtToken.getClaimAsString("email");
+    private AuthenticatedUserDto buildAuthenticatedUser(Jwt jwtToken, UserEntity user) {
         String fullName = jwtToken.getClaimAsString("name");
         String pictureUrl = jwtToken.getClaimAsString("picture");
         Boolean emailVerified = jwtToken.getClaim("email_verified");
 
         return new AuthenticatedUserDto(
-                userId,
-                email,
+                user.getId(),
+                user.getGoogleId(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
                 fullName,
                 pictureUrl,
-                emailVerified != null && emailVerified);
+                emailVerified != null && emailVerified,
+                Boolean.TRUE.equals(user.getStatus()));
     }
 }
